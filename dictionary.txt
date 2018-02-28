@@ -1,0 +1,7 @@
+N -> time
+N -> flies
+N -> arrow
+V -> flies
+V -> like
+P -> like
+DET -> an
