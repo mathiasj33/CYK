@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from cfg import CFG
+from parse_tree import ParseTree
 
 
 class CYKParser:
@@ -25,12 +25,12 @@ class CYKParser:
                 d[right].add(left)  # Bottom-up parsing
         return d
 
-    def parse(self, sentence):  # TODO: create CFGs from the chart
+    def parse(self, sentence):
         words = sentence.split(' ')
         chart = self.create_chart(len(words))
         self.fill_chart_with_dictionary(chart, words)
         self.complete_chart(chart, words)
-        self.print_chart(chart)
+        return self.create_parse_trees(chart)
 
     def create_chart(self, length):
         chart = []
@@ -112,7 +112,22 @@ class CYKParser:
                     line_start = len(s)
             print(s)
 
+    def create_parse_trees(self, chart, start=None):
+        if start is None:
+            start = list(chart[len(chart) - 1][0])[0]
+        if len(start.pointers) == 0:
+            return [ParseTree(start.data)]
+        parse_trees = []
+        for l, r in start.pointers:
+            left_tree = self.create_parse_trees(chart, l)
+            right_tree = self.create_parse_trees(chart, r)
+            for x in left_tree:
+                for y in right_tree:
+                    parse_trees.append(ParseTree(start.data, x, y))
+        return parse_trees
+
 
 if __name__ == '__main__':
     parser = CYKParser.from_files('grammar.txt', 'dictionary.txt')
-    parser.parse("time flies like an arrow")
+    trees = parser.parse("time flies like an arrow")
+    print(trees[1])
