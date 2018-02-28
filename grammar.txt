@@ -1,3 +1,6 @@
-S -> VP NP
-VP -> V
-NP -> N
+S -> N VP
+VP -> V N
+VP -> V PP
+N -> DET N
+N -> N N
+PP -> P N
